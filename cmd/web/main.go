@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/jbeausoleil/go-webapp/internal/templates"
 	"log"
 	"net/http"
 
@@ -9,9 +10,14 @@ import (
 )
 
 func main() {
-	r := chi.NewRouter()
+	tmpl, err := templates.LoadTemplates()
+	if err != nil {
+		log.Fatalf("Failed to load templates: %v", err)
+	}
 
-	taskHandler := handlers.NewTaskController()
+	taskHandler := handlers.NewTaskController(tmpl)
+
+	r := chi.NewRouter()
 
 	r.Route("/tasks", func(r chi.Router) {
 		r.Get("/", taskHandler.List)
